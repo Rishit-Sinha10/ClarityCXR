@@ -1,0 +1,51 @@
+# ================================
+# Multimodal Healthcare AI Scholar
+# ================================
+# Web API
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+# Environment & configuration
+python-dotenv
+# AI / LLM
+openai
+google-generativeai
+groq
+# LangChain / RAG
+langchain
+langchain-community
+langchain-openai
+langchain-google-genai
+langchain-groq
+# Vector database
+chromadb
+faiss-cpu
+# Embeddings
+sentence-transformers
+# Document processing
+pypdf
+python-docx
+python-pptx
+# OCR
+pytesseract
+Pillow
+# Multimodal / image processing
+opencv-python
+# Data processing
+numpy
+pandas
+# HTTP requests
+requests
+httpx
+# Async / utilities
+aiofiles
+# Database
+sqlalchemy
+# Authentication / security
+python-jose[cryptography]
+passlib[bcrypt]
+# Development
+pytest
+pytest-asyncio
