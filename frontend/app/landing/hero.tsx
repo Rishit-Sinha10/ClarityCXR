@@ -61,25 +61,6 @@ export default function Hero({
             >
               Intelligence
             </span>
-
-            {/* Underline */}
-            <svg
-              className="hero-underline absolute -bottom-2 left-0 w-full"
-              viewBox="0 0 170 30"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M2 9C32.8203 5.34032 108.769 -0.881146 166 3.51047"
-                stroke="currentColor"
-                strokeWidth="6"
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.9"
-              />
-            </svg>
           </span>{" "}
           With Clarity
         </h1>

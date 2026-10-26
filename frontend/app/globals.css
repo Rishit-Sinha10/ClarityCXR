@@ -12,6 +12,14 @@
   --muted: #6b6b6b;
   --accent: #0fd3b8;
 
+  /* -- dashboard workspace -- */
+  --workspace: #f5f6f8;
+  --navy: #0b1324;
+  --navy-raised: #111c31;
+  --navy-border: #223049;
+  --navy-foreground: #f2f6fb;
+  --navy-muted: #93a4c0;
+
   /* -- convention: AI proposes, clinician disposes -- */
   --accent-ink: #06332c;
   --accent-hover: #0bc4ab;
@@ -55,6 +63,12 @@
   --color-hairline: var(--hairline);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-workspace: var(--workspace);
+  --color-navy: var(--navy);
+  --color-navy-raised: var(--navy-raised);
+  --color-navy-border: var(--navy-border);
+  --color-navy-foreground: var(--navy-foreground);
+  --color-navy-muted: var(--navy-muted);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-ink: var(--accent-ink);

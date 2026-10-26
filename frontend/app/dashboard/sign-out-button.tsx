@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2, LogOut } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { cn } from "@/lib/utils";
 
-export default function SignOutButton() {
+export default function SignOutButton({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"button">) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
@@ -26,9 +32,22 @@ export default function SignOutButton() {
       type="button"
       onClick={signOut}
       disabled={busy}
-      className="mt-8 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+      className={cn(
+        "flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-60",
+        className,
+      )}
+      {...props}
     >
-      {busy ? "Signing out..." : "Sign out"}
+      {busy ? (
+        <Loader2 className="size-3.5 animate-spin" aria-hidden />
+      ) : (
+        (children ?? (
+          <>
+            <LogOut className="size-3.5" aria-hidden />
+            Sign out
+          </>
+        ))
+      )}
     </button>
   );
 }
