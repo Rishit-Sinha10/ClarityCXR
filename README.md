@@ -1,3 +1,4 @@
+
 # ClarityCXR
 
 ClarityCXR is a multimodal healthcare AI workspace designed for clinicians and radiologists. It fuses chest imaging, clinical reports, lab results, and patient medical histories into a single interactive interface to accelerate diagnostic workflows.
@@ -93,7 +94,13 @@ bun run start
 ├── docker-compose.yml
 ├── backend/
 │   ├── app.py
-│   └── requirements.txt
+│   ├── config/
+│   │   └── database.py
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── uploads/
+│   └── utils/
+│       └── test.py
 └── frontend/
     ├── app/
     │   ├── auth/
@@ -102,7 +109,6 @@ bun run start
     │   ├── landing/
     │   ├── login/
     │   ├── layout.tsx
-    │   ├── middleware.ts
     │   └── page.tsx
     ├── components/
     │   ├── ui/
@@ -116,14 +122,16 @@ bun run start
     │   ├── github.tsx
     │   └── google.tsx
     ├── lib/
+    │   ├── api.ts
+    │   ├── studies-api.ts
     │   └── utils.ts
     ├── utils/
     │   ├── auth.tsx
     │   └── supabase/
     ├── package.json
+    ├── proxy.ts
     └── tsconfig.json
 ```
-
 ## Testing
 
 Run backend tests using `pytest`:
