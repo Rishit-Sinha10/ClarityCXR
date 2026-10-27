@@ -1,126 +1,158 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, FileText, SearchX } from "lucide-react";
-import {
-  DEMO_REPORTS,
-  formatStudyDate,
-} from "@/lib/demo-data";
+import { DEMO_REPORTS, formatStudyDate } from "@/lib/demo-data";
 import { useDashboardSearch } from "@/components/dashboard/search-context";
+
+type Study = {
+  id: string;
+  filename: string;
+  size_bytes: number;
+  status: string;
+  created_at: string;
+};
 
 export function ReportsList() {
   const { query, clearQuery } = useDashboardSearch();
-  const normalized = query.trim().toLowerCase();
+  const [studies, setStudies] = useState<Study[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const reports = useMemo(() => {
-    if (!normalized) {
-      return DEMO_REPORTS;
+  const BackendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  const fetchStudies = useCallback(async () => {
+    if (!BackendURL) {
+      setError("Backend URL is not configured.");
+      setLoading(false);
+      return;
     }
 
-    return DEMO_REPORTS.filter(
-      (report) =>
-        report.id.toLowerCase().includes(normalized) ||
-        report.studyId.toLowerCase().includes(normalized) ||
-        report.patientName.toLowerCase().includes(normalized),
-    );
-  }, [normalized]);
+    try {
+      setError("");
 
-  if (reports.length === 0) {
-    return (
-      <div className="rounded-xl border border-hairline bg-card px-6 py-14 text-center shadow-[0_1px_2px_rgba(10,10,10,0.03)]">
-        <span className="mx-auto grid size-10 place-items-center rounded-full bg-plate text-muted-foreground">
-          <SearchX className="size-5" aria-hidden />
-        </span>
-        <p className="mt-3 text-sm font-medium text-ink">No reports found</p>
-        <p className="mt-1 text-[11px] text-muted-foreground">
-          Nothing matches “{query.trim()}”. Try another report, Study ID, or
-          patient name.
-        </p>
-        <button
-          type="button"
-          onClick={clearQuery}
-          className="mt-4 rounded-md border border-hairline bg-card px-3 py-1.5 text-[11px] font-medium text-ink transition-colors hover:bg-plate"
-        >
-          Clear search
-        </button>
-      </div>
-    );
-  }
+      const response = await fetch(`${BackendURL}/studies`);
+
+      if (!response.ok) {
+        throw new Error("Could not load uploaded studies.");
+      }
+
+      const data: Study[] = await response.json();
+      setStudies(data);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not connect to the backend.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [BackendURL]);
+
+  useEffect(() => {
+    void fetchStudies();
+  }, [fetchStudies]);
+
+  const normalized = query.trim().toLowerCase();
+
+  const filteredStudies = useMemo(
+    () =>
+      studies.filter(
+        (study) =>
+          study.filename.toLowerCase().includes(normalized) ||
+          study.id.toLowerCase().includes(normalized) ||
+          study.status.toLowerCase().includes(normalized),
+      ),
+    [studies, normalized],
+  );
+
+  const reports = useMemo(
+    () =>
+      DEMO_REPORTS.filter(
+        (report) =>
+          !normalized ||
+          report.id.toLowerCase().includes(normalized) ||
+          report.studyId.toLowerCase().includes(normalized) ||
+          report.patientName.toLowerCase().includes(normalized),
+      ),
+    [normalized],
+  );
 
   return (
-    <div className="overflow-hidden rounded-xl border border-hairline bg-card shadow-[0_1px_2px_rgba(10,10,10,0.03)]">
-      <div className="flex items-center justify-between gap-3 border-b border-hairline px-4 py-4 sm:px-5">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-sm font-medium text-ink">Demo reports</h2>
-            <span className="rounded-full border border-hairline bg-plate px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em] text-muted-foreground">
-              Illustrative
-            </span>
+    <div className="space-y-6">
+      <section className="overflow-hidden rounded-xl border border-hairline bg-card shadow-[0_1px_2px_rgba(10,10,10,0.03)]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-4 py-4 sm:px-5">
+          <div>
+            <h2 className="text-sm font-medium text-ink">Uploaded studies</h2>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              {loading
+                ? "Loading studies..."
+                : `${filteredStudies.length} studies found`}
+            </p>
           </div>
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            {reports.length} of {DEMO_REPORTS.length} reports shown
-          </p>
-        </div>
-      </div>
 
-      <div className="divide-y divide-hairline">
-        {reports.map((report) => (
-          <article
-            key={report.id}
-            className="flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-plate/35 sm:flex-row sm:items-start sm:justify-between sm:px-5"
+          <button
+            type="button"
+            onClick={() => void fetchStudies()}
+            disabled={loading}
+            className="rounded-md border border-hairline bg-card px-3 py-1.5 text-[11px] font-medium text-ink hover:bg-plate disabled:opacity-50"
           >
-            <div className="flex min-w-0 items-start gap-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-hairline bg-plate/60 text-muted-foreground">
-                <FileText className="size-4" aria-hidden />
-              </span>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-mono text-[11px] font-medium text-ink">
-                    {report.id}
-                  </p>
-                  <span
-                    className={
-                      report.status === "ready"
-                        ? "rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700"
-                        : "rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[9px] font-medium text-amber-800"
-                    }
-                  >
-                    {report.status === "ready" ? "Ready" : "Draft"}
+            Refresh
+          </button>
+        </div>
+
+        {error && <div className="px-5 py-4 text-sm text-red-600">{error}</div>}
+
+        {loading ? (
+          <p className="px-5 py-8 text-sm text-muted-foreground">
+            Fetching uploaded studies...
+          </p>
+        ) : !error && filteredStudies.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <FileText className="mx-auto size-6 text-muted-foreground" />
+            <p className="mt-3 text-sm font-medium text-ink">
+              {normalized ? "No matching uploads" : "No uploaded studies yet"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Upload a PNG or JPEG chest X-ray to see it here.
+            </p>
+          </div>
+        ) : (
+          <div className="divide-y divide-hairline">
+            {filteredStudies.map((study) => (
+              <article
+                key={study.id}
+                className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5"
+              >
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-hairline bg-plate/60 text-muted-foreground">
+                    <FileText className="size-4" aria-hidden />
                   </span>
-                  <span className="rounded-full border border-hairline bg-plate px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.1em] text-muted-foreground">
-                    Demo
-                  </span>
+
+                  <div className="min-w-0">
+                    <p className="break-all text-sm font-medium text-ink">
+                      {study.filename}
+                    </p>
+                    <p className="mt-1 break-all font-mono text-[10px] text-muted-foreground">
+                      ID: {study.id}
+                    </p>
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      {(study.size_bytes / (1024 * 1024)).toFixed(2)} MB
+                      {" · "}
+                      {new Date(study.created_at).toLocaleString()}
+                    </p>
+                    <span className="mt-2 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                      {study.status}
+                    </span>
+                  </div>
                 </div>
-                <p className="mt-1 text-xs font-medium text-ink">
-                  {report.patientName}
-                </p>
-                <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                  {report.studyId} · {formatStudyDate(report.createdAt)}
-                </p>
-                <p className="mt-2 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
-                  {report.summary}
-                </p>
-              </div>
-            </div>
-
-            <Link
-              href={`/dashboard/studies/${report.studyId}`}
-              className="inline-flex shrink-0 items-center gap-1 self-start rounded-md border border-hairline bg-card px-2.5 py-1.5 text-[11px] font-medium text-ink transition-colors hover:bg-plate"
-            >
-              Open study
-              <ArrowUpRight className="size-3.5" aria-hidden />
-            </Link>
-          </article>
-        ))}
-      </div>
-
-      <div className="border-t border-hairline px-4 py-3 sm:px-5">
-        <p className="text-[10px] text-muted-foreground">
-          Report text is illustrative interface content. It is not AI-generated
-          output and is not clinically validated.
-        </p>
-      </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

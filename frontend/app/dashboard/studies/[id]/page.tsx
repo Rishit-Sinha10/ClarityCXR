@@ -5,19 +5,18 @@ import {
   ArrowLeft,
   CalendarDays,
   FileText,
+  HardDrive,
   Info,
   ScanLine,
-  UserRound,
 } from "lucide-react";
+
 import { PageHeader } from "@/components/dashboard/page-header";
 import { StatusBadge } from "@/components/dashboard/status-badge";
-import { StudyThumbnail } from "@/components/dashboard/study-thumbnail";
 import {
-  DEMO_REPORTS,
-  formatStudyDate,
   getStudyById,
-} from "@/lib/demo-data";
-
+  formatStudyDate,
+  formatFileSize,
+} from "@/lib/studies-api";
 type StudyPageProps = {
   params: Promise<{ id: string }>;
 };
@@ -26,25 +25,21 @@ export async function generateMetadata({
   params,
 }: StudyPageProps): Promise<Metadata> {
   const { id } = await params;
-  const study = getStudyById(id);
+  const study = await getStudyById(id);
 
   return {
-    title: study ? study.id : "Study not found",
-    description: study
-      ? `Illustrative demo study for ${study.patientName}. Not a real patient record.`
-      : "Demo study not found.",
+    title: study ? study.original_filename : "Study not found",
+    description: study ? `Uploaded study ${study.id}` : "Study not found.",
   };
 }
 
 export default async function StudyDetailPage({ params }: StudyPageProps) {
   const { id } = await params;
-  const study = getStudyById(id);
+  const study = await getStudyById(id);
 
   if (!study) {
     notFound();
   }
-
-  const report = DEMO_REPORTS.find((item) => item.studyId === study.id);
 
   return (
     <div className="mx-auto w-full max-w-[1100px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
@@ -59,52 +54,87 @@ export default async function StudyDetailPage({ params }: StudyPageProps) {
       <div className="mt-4">
         <PageHeader
           eyebrow={`Workspace / Study / ${study.id}`}
-          title={`${study.patientName} · Chest X-ray`}
-          description="Illustrative study details for the ClarityCXR demo workspace. All patient information and findings are fictional."
+          title={`${study.original_filename} · Chest X-ray`}
+          description="Study metadata retrieved from your ClarityCXR database."
           action={
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href="/dashboard/history"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-hairline bg-card px-3 text-[11px] font-medium text-ink transition-colors hover:bg-plate"
-              >
-                <ScanLine className="size-3.5" aria-hidden />
-                All studies
-              </Link>
-              {report && (
-                <Link
-                  href="/dashboard/reports"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-[11px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
-                >
-                  <FileText className="size-3.5" aria-hidden />
-                  Open report
-                </Link>
-              )}
-            </div>
+            <Link
+              href="/dashboard/history"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-hairline bg-card px-3 text-[11px] font-medium text-ink transition-colors hover:bg-plate"
+            >
+              <ScanLine className="size-3.5" aria-hidden />
+              All studies
+            </Link>
           }
         />
       </div>
-
       <div className="mt-5 grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <section className="rounded-xl border border-hairline bg-card p-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)]">
-          <StudyThumbnail
-            variant={study.variant}
-            className="aspect-[5/6] w-full"
-            label={`Illustrative synthetic chest X-ray for ${study.id}`}
-          />
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-              Synthetic image
-            </p>
-            <span className="rounded-full border border-hairline bg-plate px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.1em] text-muted-foreground">
-              Not clinical
-            </span>
-          </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-            This generated graphic stands in for a chest X-ray thumbnail. No real
-            patient image is displayed or stored.
-          </p>
-        </section>
+        {/* Left column: file information */}
+        <div className="space-y-4">
+          <section className="rounded-xl border border-hairline bg-card p-5">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-plate">
+              <FileText className="size-6 text-muted-foreground" aria-hidden />
+            </div>
 
+            <p className="mt-4 break-words text-sm font-medium text-ink">
+              {study.original_filename}
+            </p>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Original uploaded file
+            </p>
+
+            <div className="mt-5 flex items-center gap-2 border-t border-hairline pt-4">
+              <HardDrive className="size-4 text-muted-foreground" aria-hidden />
+              <span className="text-xs text-muted-foreground">File size</span>
+              <span className="ml-auto text-xs font-medium text-ink">
+                {formatFileSize(study.size_bytes)}
+              </span>
+            </div>
+
+            <p className="mt-4 text-[10px] leading-relaxed text-muted-foreground">
+              This record confirms uploaded file metadata. Image preview and AI
+              analysis are not available through the current endpoint.
+            </p>
+          </section>
+
+          {/* Clearly labeled synthetic image placeholder */}
+          <section className="rounded-xl border border-hairline bg-card p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                Synthetic image
+              </p>
+              <span className="rounded-full border border-hairline bg-plate px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.1em] text-muted-foreground">
+                Not clinical
+              </span>
+            </div>
+
+            <div
+              className="mt-3 flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-hairline bg-plate"
+              role="img"
+              aria-label="No real chest X-ray image available"
+            >
+              <div className="text-center">
+                <ScanLine
+                  className="mx-auto size-8 text-muted-foreground"
+                  aria-hidden
+                />
+                <p className="mt-2 text-xs font-medium text-muted-foreground">
+                  Image preview unavailable
+                </p>
+                <p className="mt-1 text-[10px] text-muted-foreground">
+                  No patient image displayed
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+              This placeholder does not represent an actual chest X-ray. No
+              clinical image is displayed here.
+            </p>
+          </section>
+        </div>
+
+        {/* Right column: metadata and timeline */}
         <div className="min-w-0 space-y-4">
           <section className="rounded-xl border border-hairline bg-card p-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -112,83 +142,52 @@ export default async function StudyDetailPage({ params }: StudyPageProps) {
                 <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                   Study ID
                 </p>
-                <p className="mt-1 font-mono text-sm font-medium text-ink">
+                <p className="mt-1 break-all font-mono text-sm font-medium text-ink">
                   {study.id}
                 </p>
               </div>
-              <StatusBadge status={study.status} />
+
+              <StatusBadge
+                status={
+                  study.status as Parameters<typeof StatusBadge>[0]["status"]
+                }
+              />
             </div>
 
             <dl className="mt-5 grid gap-4 border-t border-hairline pt-4 sm:grid-cols-3">
               <div>
-                <dt className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-                  <UserRound className="size-3" aria-hidden />
-                  Patient
+                <dt className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                  Study ID
                 </dt>
-                <dd className="mt-1.5 text-xs font-medium text-ink">
-                  {study.patientName}
-                </dd>
-                <dd className="mt-0.5 text-[10px] text-muted-foreground">
-                  {study.age} yrs · {study.sex}
+                <dd className="mt-1.5 break-all font-mono text-xs text-ink">
+                  {study.id}
                 </dd>
               </div>
+
               <div>
                 <dt className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
                   <CalendarDays className="size-3" aria-hidden />
-                  Acquired
+                  Uploaded
                 </dt>
                 <dd className="mt-1.5 text-xs font-medium text-ink">
-                  {formatStudyDate(study.date)}
-                </dd>
-                <dd className="mt-0.5 text-[10px] text-muted-foreground">
-                  CXR · PA view
+                  {formatStudyDate(study.created_at)}
                 </dd>
               </div>
+
               <div>
                 <dt className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-                  Review
+                  File size
                 </dt>
                 <dd className="mt-1.5 text-xs font-medium text-ink">
-                  {study.reviewedBy}
-                </dd>
-                <dd className="mt-0.5 text-[10px] text-muted-foreground">
-                  Demo assignment
+                  {formatFileSize(study.size_bytes)}
                 </dd>
               </div>
             </dl>
           </section>
 
           <section className="rounded-xl border border-hairline bg-card p-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] sm:p-5">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-sm font-medium text-ink">
-                Illustrative findings
-              </h2>
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em] text-amber-800">
-                Demo only
-              </span>
-            </div>
-            <p className="mt-3 text-[13px] font-medium text-ink">
-              {study.findingSummary}
-            </p>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              {study.impression}
-            </p>
-
-            <div className="mt-4 flex items-start gap-2 rounded-lg border border-hairline bg-plate/55 px-3 py-2.5">
-              <Info
-                className="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
-                aria-hidden
-              />
-              <p className="text-[10px] leading-relaxed text-muted-foreground">
-                This text is static interface content. It was not produced by a
-                validated AI model, has not been reviewed by a clinician, and
-                must not be used for diagnosis or treatment.
-              </p>
-            </div>
-          </section>
-
-          <section className="rounded-xl border border-hairline bg-card p-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] sm:p-5">
             <h2 className="text-sm font-medium text-ink">Study timeline</h2>
+
             <ol className="mt-4 space-y-3">
               {[
                 ["Image added", "Demo workspace", "Complete"],
@@ -205,11 +204,7 @@ export default async function StudyDetailPage({ params }: StudyPageProps) {
                       ? "In progress"
                       : "Complete",
                 ],
-                [
-                  "Report",
-                  report ? "Illustrative report available" : "Not available",
-                  report ? "Demo" : "Waiting",
-                ],
+                ["Report", "Not available", "Waiting"],
               ].map(([label, detail, state]) => (
                 <li key={label} className="flex items-start gap-3">
                   <span

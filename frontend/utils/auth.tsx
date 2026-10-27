@@ -20,51 +20,72 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-
   const isLoginPage = pathname === "/login" || pathname.startsWith("/login/");
-
-  useEffect(() => {
-    if (currentUser && isLoginPage) {
-      router.replace("/dashboard");
-    }
-  }, [currentUser, isLoginPage, router]);
+  const isDashboardPage =
+    pathname === "/dashboard" || pathname.startsWith("/dashboard/");
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data }) => {
-      setCurrentUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-
+    let active = true;
+    let authEventVersion = 0;
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      authEventVersion += 1;
+      if (!active) return;
       setCurrentUser(session?.user ?? null);
+      setLoading(false);
     });
+    const initialAuthEventVersion = authEventVersion;
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (!active || authEventVersion !== initialAuthEventVersion) return;
+        if (error) console.error("Could not restore Supabase session:", error);
+        setCurrentUser(data.session?.user ?? null);
+        setLoading(false);
+      } catch (error) {
+        if (!active || authEventVersion !== initialAuthEventVersion) return;
+        console.error("Could not restore Supabase session:", error);
+        setCurrentUser(null);
+        setLoading(false);
+      }
+    };
+    void checkSession();
     return () => {
+      active = false;
       subscription.unsubscribe();
     };
   }, []);
+  useEffect(() => {
+    if (loading) return;
+    if (currentUser && isLoginPage) {
+      router.replace("/dashboard");
+    } else if (!currentUser && isDashboardPage) {
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+    }
+  }, [currentUser, isDashboardPage, isLoginPage, loading, pathname, router]);
+
   const logout = async () => {
     const supabase = createClient();
-    try {
-      const { error } = await supabase.auth.signOut({ scope: "global" });
-      if (error) {
-        console.error("Logout failed", error);
-      }
-    } catch (error) {
-      console.error("Logout failed", error);
-    } finally {
-      setCurrentUser(null);
-    }
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    setCurrentUser(null);
+    router.replace("/login");
+    router.refresh();
   };
+  if (loading || (isDashboardPage && !currentUser)) {
+    return (
+      <main
+        className="flex min-h-screen items-center justify-center"
+        role="status"
+        aria-live="polite"
+      >
+        Checking your session…
+      </main>
+    );
+  }
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        loading,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ currentUser, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );

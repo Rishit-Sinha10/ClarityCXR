@@ -1,13 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import {
-  CloudUpload,
-  FileImage,
-  Info,
-  ShieldCheck,
-  X,
-} from "lucide-react";
+import { CloudUpload, FileImage, Info, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +23,8 @@ export function UploadForm() {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const BackendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   function selectFile(nextFile: File | undefined) {
     setNotice(null);
@@ -55,21 +51,44 @@ export function UploadForm() {
       inputRef.current.value = "";
     }
   }
-
+  async function sendFile() {
+    if (!file) {
+      setError("Select an image before uploading.");
+      return;
+    }
+    setUploading(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`${BackendURL}/studies`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.detail || "Upload failed. Please try again.");
+      }
+      setNotice(
+        `Upload successful! Study ID: ${result.id}. Status: ${result.status}.`,
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not connect to the backend.",
+      );
+    } finally {
+      setUploading(false);
+    }
+  }
   return (
     <form
       className="space-y-5"
       onSubmit={(event) => {
         event.preventDefault();
-
-        if (!file) {
-          setError("Select an image before queueing a demo study.");
-          return;
-        }
-
-        setNotice(
-          "Demo only — the file stayed in this browser. No upload, analysis, or report was created.",
-        );
+        void sendFile();
       }}
     >
       <div
@@ -156,11 +175,9 @@ export function UploadForm() {
       )}
 
       <div>
-        <label
-          htmlFor={noteId}
-          className="block text-xs font-medium text-ink"
-        >
-          Study note <span className="font-normal text-muted-foreground">(optional)</span>
+        <label htmlFor={noteId} className="block text-xs font-medium text-ink">
+          Study note{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
         </label>
         <textarea
           id={noteId}
@@ -172,7 +189,10 @@ export function UploadForm() {
       </div>
 
       <div className="flex items-start gap-2 rounded-lg border border-hairline bg-plate/55 px-3 py-2.5">
-        <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-accent-ink" aria-hidden />
+        <ShieldCheck
+          className="mt-0.5 size-3.5 shrink-0 text-accent-ink"
+          aria-hidden
+        />
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           Do not use real patient images or identifiers. This prototype does not
           upload, store, or analyze files, and does not produce diagnoses.
@@ -180,14 +200,14 @@ export function UploadForm() {
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <Button type="submit" className="h-10 px-4 text-xs" disabled={!file}>
+        <Button
+          type="submit"
+          className="h-10 px-4 text-xs"
+          disabled={!file || uploading}
+        >
           <CloudUpload className="size-4" aria-hidden />
-          Queue demo study
+          {uploading ? "Uploading..." : "Upload study"}
         </Button>
-        <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-          <Info className="size-3" aria-hidden />
-          Analysis pipeline not connected
-        </p>
       </div>
 
       {notice && (

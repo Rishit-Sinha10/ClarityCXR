@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Loader2, LogOut } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
+import { useAuth } from "@/utils/auth";
 import { cn } from "@/lib/utils";
 
 export default function SignOutButton({
@@ -11,20 +10,17 @@ export default function SignOutButton({
   children,
   ...props
 }: React.ComponentProps<"button">) {
-  const router = useRouter();
+  const { logout } = useAuth();
   const [busy, setBusy] = useState(false);
 
   async function signOut() {
     setBusy(true);
-    const { error } = await createClient().auth.signOut();
-
-    if (error) {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Sign-out failed:", error);
       setBusy(false);
-      return;
     }
-
-    router.replace("/");
-    router.refresh();
   }
 
   return (

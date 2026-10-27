@@ -1,9 +1,21 @@
 import { cn } from "@/lib/utils";
 import { GoogleSignInButton } from "@/components/google";
 import { GithubSignInButton } from "@/components/github";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
-export default function LoginPage() {
-  return <LoginForm />;
+export default async function LoginPage({
+  searchParams,
+}: PageProps<"/login">) {
+  const { next } = await searchParams;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) redirect("/dashboard");
+
+  return <LoginForm from={Array.isArray(next) ? next[0] : next} />;
 }
 
 export function LoginForm({
