@@ -13,7 +13,7 @@ const steps = [
   {
     n: "03",
     title: "Clinical Insights",
-    desc: "Turn complex healthcare data into clear, actionable insights that support faster, informed clinical decisions.",
+    desc: "Turn complex healthcare data into clear, source-linked findings for clinician review.",
   },
 ];
 export default function HowItWorks() {

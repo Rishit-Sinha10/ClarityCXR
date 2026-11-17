@@ -14,15 +14,15 @@ const features = [
   },
   {
     title: "Patient Data Synthesis",
-    desc: "Bring fragmented patient information together into a clear, contextualized view that is easier to understand and act on.",
+    desc: "Bring fragmented patient information together into a clear, contextualized view that is easier to review.",
   },
   {
     title: "Clinical Decision Support",
-    desc: "Generate evidence-informed insights and recommendations to help clinicians make faster, more informed decisions.",
+    desc: "Surface evidence-linked findings and source citations for clinician review. No autonomous diagnosis and no treatment recommendation.",
   },
   {
     title: "Secure by Design",
-    desc: "Protect sensitive healthcare data with privacy, access controls, encryption, and secure infrastructure built for healthcare workflows.",
+    desc: "Built for healthcare workflows. Security and data-handling documentation is available during evaluation.",
   },
 ];
 

@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   },
   description:
     "ClarityCXR chest X-ray analysis workspace. Demonstration interface with fictional data.",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
 };
 
 function readMetadataString(

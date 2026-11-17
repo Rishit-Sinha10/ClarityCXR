@@ -1,18 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import Brand from "./brand";
 
 const links = [
-  { href: "#product", label: "Product" },
-  { href: "#how", label: "How it works" },
-  { href: "#features", label: "Features" },
+  { href: "/#product", label: "Product" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#features", label: "Features" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    menuRef.current?.querySelector<HTMLElement>("a")?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-hairline/80 bg-paper/75 backdrop-blur-md">
@@ -39,7 +57,7 @@ export default function Navbar() {
             Sign in
           </Link>
           <Link
-            href="/login"
+            href="/demo"
             className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover"
           >
             Book a demo
@@ -48,18 +66,23 @@ export default function Navbar() {
 
         <button
           type="button"
+          ref={menuButtonRef}
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="site-menu"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="grid size-9 place-items-center rounded-md border border-hairline bg-card text-ink md:hidden"
+          className="grid size-10 place-items-center rounded-md border border-hairline bg-card text-ink md:hidden"
         >
           {open ? <X className="size-4" aria-hidden /> : <Menu className="size-4" aria-hidden />}
         </button>
       </nav>
 
       {open && (
-        <div id="site-menu" className="border-t border-hairline/80 bg-paper/95 backdrop-blur-md md:hidden">
+        <div
+          id="site-menu"
+          ref={menuRef}
+          className="border-t border-hairline/80 bg-paper/95 backdrop-blur-md md:hidden"
+        >
           <div className="mx-auto max-w-6xl space-y-1 px-5 py-4 sm:px-8">
             {links.map((link) => (
               <a
@@ -71,11 +94,18 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
-            <div className="pt-2">
+            <div className="space-y-1 pt-2">
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
-                className="block rounded-full bg-primary px-5 py-2.5 text-center text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover"
+                className="block rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-plate hover:text-ink"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/demo"
+                onClick={() => setOpen(false)}
+                className="block rounded-full bg-primary px-5 py-3 text-center text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover"
               >
                 Book a demo
               </Link>

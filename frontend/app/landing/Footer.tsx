@@ -1,32 +1,29 @@
-import { ArrowUp, ShieldCheck, type LucideIcon } from "lucide-react";
 import Brand from "./brand";
+
 const columns: { title: string; links: [string, string][] }[] = [
   {
     title: "Product",
     links: [
-      ["#product", "Product demo"],
-      ["#how", "How it works"],
-      ["#features", "Features"],
-      ["#top", "Security"],
+      ["/#product", "Product demo"],
+      ["/#how", "How it works"],
+      ["/#features", "Features"],
+      ["/#intended-use", "Intended use"],
+      ["/#trust", "Trust & evaluation"],
     ],
   },
   {
     title: "Company",
-    links: [
-      ["#top", "About"],
-      ["#top", "Journal"],
-      ["#top", "Contact"],
-    ],
+    links: [["/demo", "Contact"]],
   },
   {
-    title: "Resources",
+    title: "Legal",
     links: [
-      ["#top", "Radiology playbooks"],
-      ["#top", "API reference"],
-      ["#top", "FHIR & DICOM"],
+      ["/privacy", "Privacy"],
+      ["/terms", "Terms"],
     ],
   },
 ];
+
 export default function Footer() {
   return (
     <footer className="bg-ink text-paper">
@@ -35,14 +32,14 @@ export default function Footer() {
           <div>
             <Brand dark />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">
-              Fusing imaging, reports and patient data into one clear read — for
-              clinicians and their AI.
+              Fusing imaging, reports, and clinical notes into one source-linked
+              read.
             </p>
           </div>
 
           {columns.map((col) => (
             <div key={col.title}>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper/60">
                 {col.title}
               </p>
               <ul className="mt-4 space-y-2.5">
@@ -60,7 +57,29 @@ export default function Footer() {
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-3 border-t border-paper/10 py-6 sm:flex-row sm:items-center sm:justify-between"></div>
+        <div className="border-t border-paper/10 py-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-paper/50">
+              © {new Date().getFullYear()} ClarityCXR. All rights reserved.
+            </p>
+            <div className="flex gap-4 text-xs text-paper/50">
+              <a
+                href="/privacy"
+                className="transition-colors hover:text-accent"
+              >
+                Privacy
+              </a>
+              <a href="/terms" className="transition-colors hover:text-accent">
+                Terms
+              </a>
+            </div>
+          </div>
+          <p className="mt-4 max-w-2xl text-xs leading-relaxed text-paper/50">
+            ClarityCXR is decision-support software. Outputs are not a diagnosis
+            and require review by a qualified radiologist. Do not submit patient
+            information through this site.
+          </p>
+        </div>
       </div>
     </footer>
   );

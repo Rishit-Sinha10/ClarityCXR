@@ -30,13 +30,6 @@ export default function DashboardShell({
   return (
     <DashboardSearchProvider>
       <div className="flex min-h-screen bg-workspace">
-        <a
-          href="#dashboard-content"
-          className="sr-only z-[60] rounded-md bg-ink px-3 py-2 text-xs text-paper focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
-        >
-          Skip to content
-        </a>
-
         {navigationOpen && (
           <button
             type="button"
@@ -56,7 +49,11 @@ export default function DashboardShell({
             user={user}
             onOpenNavigation={() => setNavigationOpen(true)}
           />
-          <main id="dashboard-content" className="min-w-0 flex-1">
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="min-w-0 flex-1 focus:outline-none"
+          >
             {children}
           </main>
         </div>

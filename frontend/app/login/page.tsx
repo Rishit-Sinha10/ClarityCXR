@@ -1,8 +1,15 @@
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
 import { GoogleSignInButton } from "@/components/google";
 import { GithubSignInButton } from "@/components/github";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  robots: { index: false, follow: false },
+};
 
 export default async function LoginPage({
   searchParams,
@@ -35,7 +42,7 @@ export function LoginForm({
         {" "}
         <img
           src="/image.png"
-          alt="Healthcare"
+          alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/20" />
@@ -49,7 +56,11 @@ export function LoginForm({
       </div>
 
       {/* Right Auth */}
-      <div className="flex min-h-screen items-center justify-center px-6 py-12">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex min-h-screen items-center justify-center px-6 py-12 focus:outline-none"
+      >
         <div className="w-full max-w-sm">
           <div className="mb-10 text-center">
             <h1 className="font-display text-2xl font-medium tracking-tight">
@@ -78,11 +89,24 @@ export function LoginForm({
           </div>
 
           <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
-            By continuing, you agree to ClarityCXR&apos;s terms and privacy
-            policy.
+            By continuing, you agree to ClarityCXR&apos;s{" "}
+            <Link
+              href="/terms"
+              className="font-medium text-ink underline decoration-hairline underline-offset-2 hover:decoration-accent"
+            >
+              terms of use
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="font-medium text-ink underline decoration-hairline underline-offset-2 hover:decoration-accent"
+            >
+              privacy policy
+            </Link>
+            .
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

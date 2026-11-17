@@ -1,0 +1,84 @@
+import Reveal from "./reval";
+
+const rows = [
+  {
+    label: "Intended use",
+    body: "ClarityCXR is decision-support software for qualified healthcare professionals. It links findings on chest X-ray and CT to reports, prior studies, and clinical notes so a clinician can review the evidence. It is not intended for primary diagnosis or patient self-use.",
+  },
+  {
+    label: "Clinical review",
+    body: "ClarityCXR produces drafts, not final reads. A radiologist reviews, edits, and signs every report. Nothing is auto-signed, and the software does not recommend treatment.",
+  },
+  {
+    label: "Data in demos",
+    body: "Every screenshot, walkthrough, and demo on this site uses synthetic data. No real patient information is displayed, and no PHI is required to evaluate the product.",
+  },
+];
+
+export default function Compliance() {
+  const status = process.env.NEXT_PUBLIC_REGULATORY_STATUS?.trim();
+  const detail = process.env.NEXT_PUBLIC_REGULATORY_STATUS_DETAIL?.trim();
+
+  return (
+    <section id="intended-use" className="border-t border-hairline bg-surface">
+      <div className="mx-auto max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
+        <Reveal>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
+            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" />
+            Intended use &amp; limitations
+          </p>
+        </Reveal>
+        <Reveal delay={80}>
+          <h2 className="mt-5 max-w-2xl font-display text-4xl leading-[1.05] tracking-[-0.02em] text-ink sm:text-5xl">
+            Decision support,
+            <br />
+            with the <span className="italic">limits</span> stated.
+          </h2>
+        </Reveal>
+
+        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:grid-cols-2">
+          {rows.map((row) => (
+            <div key={row.label} className="bg-card p-6 sm:p-7">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                {row.label}
+              </p>
+              <p className="mt-2.5 text-sm leading-relaxed text-ink/80">
+                {row.body}
+              </p>
+            </div>
+          ))}
+          <div className="bg-card p-6 sm:p-7">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              Regulatory status
+            </p>
+            <p className="mt-2.5 text-sm leading-relaxed text-ink/80">
+              {status ? (
+                <>
+                  <span className="font-medium text-ink">{status}.</span>
+                  {detail ? ` ${detail}` : ""}
+                </>
+              ) : (
+                <>
+                  Regulatory status varies by market. Contact us for the
+                  current status, intended use, and availability in your
+                  region.
+                </>
+              )}
+            </p>
+            <a
+              href="/demo"
+              className="mt-3 inline-block text-sm font-medium text-accent-ink underline decoration-accent/40 underline-offset-4 transition-colors hover:decoration-accent"
+            >
+              Ask about your market
+            </a>
+          </div>
+        </div>
+
+        <p className="mt-6 max-w-3xl text-xs leading-relaxed text-muted-foreground">
+          This is a summary, not the full labeling. It does not replace the
+          product&apos;s instructions for use.
+        </p>
+      </div>
+    </section>
+  );
+}

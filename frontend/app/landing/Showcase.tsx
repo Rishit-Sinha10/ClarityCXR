@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import {
-  Activity,
   Bell,
   Check,
   CircleCheck,
@@ -55,37 +54,6 @@ const findings = [
     title: "No pleural effusion",
     note: "Costophrenic angles clear",
     chip: "OK",
-  },
-] as const;
-
-const insights = [
-  {
-    icon: TriangleAlert,
-    tone: "text-[color:var(--vital)]",
-    rule: "bg-[color:var(--vital)]",
-    tag: "REVIEW",
-    text: "Consolidation sits over the old right hilar prominence — correlate clinically.",
-  },
-  {
-    icon: Sparkles,
-    tone: "text-[color:var(--signal)]",
-    rule: "bg-[color:var(--signal)]",
-    tag: "ACTION",
-    text: "Begin empiric coverage; re-check CRP in 48 hours.",
-  },
-  {
-    icon: Activity,
-    tone: "text-destructive",
-    rule: "bg-destructive",
-    tag: "WATCH",
-    text: "Metformin continues while glucose 11.4 and eGFR 68.",
-  },
-  {
-    icon: CircleCheck,
-    tone: "text-muted-foreground",
-    rule: "bg-hairline",
-    tag: "OK",
-    text: "Cardiomediastinal contours stable vs 08/12.",
   },
 ] as const;
 
@@ -244,7 +212,7 @@ export default function Showcase() {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(
-        "New right midzone opacity since 08/12; no effusion; cardiomediastinal contours stable. Most consistent with community-acquired pneumonia.",
+        "New right midzone opacity since 08/12; no effusion; cardiomediastinal contours stable. Candidate finding: community-acquired pneumonia. For radiologist review; no treatment recommendation.",
       );
     } catch {
       /* clipboard unavailable in preview */
@@ -288,16 +256,19 @@ export default function Showcase() {
                 <span className="font-display text-sm font-bold tracking-tight text-ink">
                   claritycxr
                 </span>
+                <span className="rounded-full border border-hairline bg-amber-soft/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-ink/70">
+                  Synthetic patient
+                </span>
               </div>
-              <label className="hidden h-8 w-52 items-center gap-2 rounded-lg border border-hairline bg-card px-2.5 text-xs text-muted-foreground shadow-sm md:flex xl:w-64">
+              <div className="hidden h-8 w-52 items-center gap-2 rounded-lg border border-hairline bg-card px-2.5 text-xs text-muted-foreground shadow-sm md:flex xl:w-64">
                 <Search className="size-3.5" aria-hidden />
                 <span className="flex-1 truncate">
                   Search patients, studies, orders…
                 </span>
-                <kbd className="rounded border border-hairline px-1 font-mono text-[8px] text-muted-foreground">
+                <kbd className="rounded border border-hairline px-1 font-mono text-[10px] text-muted-foreground">
                   ⌘K
                 </kbd>
-              </label>
+              </div>
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
@@ -332,7 +303,7 @@ export default function Showcase() {
                     </div>
                     <Badge
                       variant="outline"
-                      className="font-mono text-[9px] uppercase tracking-widest"
+                      className="font-mono text-[10px] uppercase tracking-widest"
                     >
                       Admitting
                     </Badge>
@@ -365,7 +336,7 @@ export default function Showcase() {
                         >
                           {v.v}
                           {v.d && (
-                            <span className="ml-0.5 text-[9px] opacity-70">
+                            <span className="ml-0.5 text-[10px] opacity-70">
                               {v.d}
                             </span>
                           )}
@@ -418,7 +389,7 @@ export default function Showcase() {
                     >
                       <TabsList
                         variant="line"
-                        className="h-7 flex justify-content center"
+                        className="flex h-7 justify-center"
                       >
                         <TabsTrigger value="lungs" className="text-[11px]">
                           Lungs
@@ -439,21 +410,20 @@ export default function Showcase() {
 
                   <div
                     className="mt-3 space-y-1.5"
-                    role="list"
+                    role="group"
                     aria-label="AI findings"
                   >
                     {findings.map((f) => (
-                      <div
+                      <button
                         key={f.id}
-                        role="button"
-                        tabIndex={0}
-                        aria-pressed={active === f.id}
+                        type="button"
+                        onClick={() => setActive(f.id)}
                         onMouseEnter={() => setActive(f.id)}
                         onMouseLeave={() => setActive(-1)}
                         onFocus={() => setActive(f.id)}
                         onBlur={() => setActive(-1)}
                         className={cn(
-                          "flex cursor-pointer items-start gap-2.5 rounded-md border border-hairline px-3 py-1.5 transition-colors",
+                          "flex w-full cursor-pointer items-start gap-2.5 rounded-md border border-hairline px-3 py-1.5 text-left transition-colors",
                           active === f.id
                             ? "border-accent bg-accent-soft"
                             : "bg-plate/50 hover:bg-plate",
@@ -471,10 +441,10 @@ export default function Showcase() {
                             {f.note}
                           </p>
                         </div>
-                        <span className="ml-auto self-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                        <span className="ml-auto self-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                           {f.chip}
                         </span>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </section>
@@ -502,22 +472,19 @@ export default function Showcase() {
                       <p className="text-xs leading-relaxed text-ink/85">
                         New right midzone opacity since 08/12. WBC 14.2 and CRP
                         96, glucose 11.4. No effusion; cardiomediastinal
-                        contours stable. Most consistent with{" "}
+                        contours stable. Candidate finding:{" "}
                         <span className="font-medium text-accent-ink">
                           community-acquired pneumonia
                         </span>{" "}
-                        — empiric coverage started.
+                        — for radiologist review. No treatment recommendation.
                       </p>
 
-                      <div className="mt-3 flex items-center gap-3">
-                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-plate">
-                          <div
-                            className="h-full rounded-full bg-[color:var(--signal)]"
-                            style={{ width: "94%" }}
-                          />
-                        </div>
-                        <span className="font-mono text-[10px] tracking-widest text-muted-foreground">
-                          conf 0.94
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          Source-linked
+                        </span>
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          Not a diagnosis
                         </span>
                       </div>
 
@@ -526,7 +493,7 @@ export default function Showcase() {
                           <Badge
                             key={t}
                             variant="outline"
-                            className="font-mono text-[8px] uppercase tracking-widest"
+                            className="font-mono text-[10px] uppercase tracking-widest"
                           >
                             {t}
                           </Badge>
@@ -560,11 +527,14 @@ export default function Showcase() {
                         </Button>
                       </div>
                       {queued && (
-                        <p className="mt-2 font-mono text-[10px] tracking-wide text-accent-ink">
+                        <p
+                          role="status"
+                          className="mt-2 font-mono text-[10px] tracking-wide text-accent-ink"
+                        >
                           Draft queued to Dr. Ibekwe — not signed.
                         </p>
                       )}
-                      <p className="mt-2 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                      <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                         Read 04:24 · review by Dr. Ibekwe
                       </p>
                     </CardContent>
@@ -594,7 +564,7 @@ export default function Showcase() {
                           className="flex items-baseline justify-between gap-3"
                         >
                           <div className="min-w-0">
-                            <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                               {d.k}
                             </p>
                             <p className="mt-0.5 text-xs leading-snug text-ink/85">
@@ -603,7 +573,7 @@ export default function Showcase() {
                           </div>
                           <Badge
                             variant="secondary"
-                            className="shrink-0 font-mono text-[8px] uppercase tracking-widest"
+                            className="shrink-0 font-mono text-[10px] uppercase tracking-widest"
                           >
                             {d.src}
                           </Badge>
@@ -615,6 +585,10 @@ export default function Showcase() {
               </div>
             </div>
           </div>
+          <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
+            Illustrative interface with synthetic patient data. Decision support
+            only — not for diagnostic use.
+          </p>
         </Reveal>
       </div>
     </section>

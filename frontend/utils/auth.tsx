@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace("/login");
     router.refresh();
   };
-  if (loading || (isDashboardPage && !currentUser)) {
+  if (isDashboardPage && (loading || !currentUser)) {
     return (
       <main
         className="flex min-h-screen items-center justify-center"

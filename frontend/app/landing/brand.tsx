@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 export default function Brand({
   dark = false,
-  href = "#top",
+  href = "/",
 }: {
   dark?: boolean;
   href?: string;
