@@ -1,7 +1,7 @@
 const BASE = "https://internal.invalid";
 export function safeRedirectPath(
   raw: string | null | undefined,
-  fallback = "/dashboard",
+  fallback = "/chat",
 ): string {
   const value = raw?.trim();
   if (!value) return fallback;

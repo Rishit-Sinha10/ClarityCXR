@@ -1,17 +1,21 @@
-import { CircleCheck, Clock3, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
-  STUDY_STATUS_LABEL,
-  type StudyStatus,
-} from "@/lib/demo-data";
+  CircleCheck,
+  CircleX,
+  Clock3,
+  FileUp,
+  Loader2,
+  type LucideIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const statusStyles: Record<
-  StudyStatus,
-  { className: string; icon: typeof CircleCheck }
-> = {
+const statusStyles: Record<string, { className: string; icon: LucideIcon }> = {
   completed: {
     className: "border-emerald-200 bg-emerald-50 text-emerald-700",
     icon: CircleCheck,
+  },
+  uploaded: {
+    className: "border-slate-200 bg-slate-50 text-slate-700",
+    icon: FileUp,
   },
   processing: {
     className: "border-blue-200 bg-blue-50 text-blue-700",
@@ -21,17 +25,27 @@ const statusStyles: Record<
     className: "border-amber-200 bg-amber-50 text-amber-800",
     icon: Clock3,
   },
+  failed: {
+    className: "border-rose-200 bg-rose-50 text-rose-700",
+    icon: CircleX,
+  },
 };
 
 export function StatusBadge({
   status,
   className,
 }: {
-  status: StudyStatus;
+  status: string;
   className?: string;
 }) {
-  const style = statusStyles[status];
+  const style = statusStyles[status.toLowerCase()] ?? {
+    className: "border-hairline bg-plate text-muted-foreground",
+    icon: Clock3,
+  };
   const Icon = style.icon;
+  const label = status
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
   return (
     <span
@@ -46,7 +60,7 @@ export function StatusBadge({
       ) : (
         <Icon className="size-3" aria-hidden />
       )}
-      {STUDY_STATUS_LABEL[status]}
+      {label || "Unknown"}
     </span>
   );
 }

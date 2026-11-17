@@ -4,12 +4,12 @@ import Reveal from "./reval";
 
 const commitments = [
   {
-    title: "Every claim has a source",
-    body: "Drafts link each finding to the film, lab, or note behind it, so review starts from evidence instead of a black box.",
+    title: "Request state stays visible",
+    body: "The workspace shows the status and output returned by the connected service instead of inventing a result.",
   },
   {
-    title: "A radiologist signs",
-    body: "Nothing is auto-signed. ClarityCXR drafts; the clinician reviews, edits, and signs every read.",
+    title: "No automated diagnosis",
+    body: "The current app does not independently interpret images, generate diagnoses, or recommend treatment.",
   },
   {
     title: "Synthetic by default",
@@ -17,18 +17,18 @@ const commitments = [
   },
   {
     title: "No borrowed credibility",
-    body: "We will not display a customer logo, testimonial, accuracy number, or certification until it is real and current.",
+    body: "We do not display customer logos, testimonials, accuracy numbers, or certifications that we cannot substantiate.",
   },
 ];
 
 const faqs = [
   {
     q: "Is ClarityCXR a diagnostic device?",
-    a: "No. ClarityCXR is decision-support software. It does not provide a diagnosis or treatment recommendation, and a qualified radiologist reviews and signs every read. Regulatory status varies by market.",
+    a: "The current app does not independently interpret images or provide a diagnosis or treatment recommendation. Regulatory status and intended use vary by market; contact us for current information.",
   },
   {
     q: "Can we test it on our own cases?",
-    a: "Yes, after de-identification and a data-handling review. We scope a pilot around your priors and workflow. The first step is a 20-minute walkthrough with a de-identified study, or ours.",
+    a: "Use synthetic images for the public demo. Do not upload patient information. Discuss data handling and evaluation requirements with us before any pilot.",
   },
   {
     q: "How do you measure performance?",
@@ -40,7 +40,7 @@ const faqs = [
   },
   {
     q: "Do you need patient data for a demo?",
-    a: "No. Use a synthetic or de-identified study. Do not send patient information through this website or the demo form.",
+    a: "No. The product preview uses synthetic imagery. Do not submit patient information through this website or the public demo.",
   },
 ];
 

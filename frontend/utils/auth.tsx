@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (loading) return;
     if (currentUser && isLoginPage) {
-      router.replace("/dashboard");
+      router.replace("/chat");
     } else if (!currentUser && isDashboardPage) {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }

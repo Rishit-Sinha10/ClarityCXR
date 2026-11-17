@@ -1,28 +1,28 @@
 import Reveal from "./reval";
 const features = [
   {
-    title: "Multimodal Analysis",
-    desc: "Understand medical images, clinical text, documents, voice, and structured data together for a complete view of patient information.",
+    title: "Image intake",
+    desc: "Upload chest X-ray images in PNG, JPG, or WebP format through the connected API.",
   },
   {
-    title: "Clinical Document Intelligence",
-    desc: "Extract, summarize, and organize key information from medical reports, records, prescriptions, and clinical documents.",
+    title: "Study history",
+    desc: "Review uploaded image filenames, file sizes, timestamps, and statuses from your study service.",
   },
   {
-    title: "Medical Image Understanding",
-    desc: "Analyze medical imaging alongside clinical context to surface relevant findings and patterns for healthcare professionals.",
+    title: "Prediction requests",
+    desc: "Submit a selected study to your configured prediction service and inspect the response it returns.",
   },
   {
-    title: "Patient Data Synthesis",
-    desc: "Bring fragmented patient information together into a clear, contextualized view that is easier to review.",
+    title: "Image and text workspace",
+    desc: "Keep a selected study beside a text prompt. Prompts are saved in this browser; conversational replies are not connected.",
   },
   {
-    title: "Clinical Decision Support",
-    desc: "Surface evidence-linked findings and source citations for clinician review. No autonomous diagnosis and no treatment recommendation.",
+    title: "Service health",
+    desc: "Check API and database availability from settings, and update your account name.",
   },
   {
-    title: "Secure by Design",
-    desc: "Built for healthcare workflows. Security and data-handling documentation is available during evaluation.",
+    title: "Clear boundaries",
+    desc: "The current app does not independently interpret images, generate diagnoses, or recommend treatment.",
   },
 ];
 
@@ -34,9 +34,9 @@ export default function Features() {
     >
       <Reveal delay={80}>
         <h2 className="mt-5 max-w-2xl font-display text-4xl leading-[1.05] tracking-[-0.02em] text-foreground sm:text-5xl">
-          Complex Data.
+          Image and context.
           <br />
-          <span className="italic">Clear</span> decisions.
+          <span className="italic">One</span> workspace.
         </h2>
       </Reveal>
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { CloudUpload, FileImage, Info, ShieldCheck, X } from "lucide-react";
+import { CloudUpload, FileImage, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { requestJson } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const acceptedTypes = ["image/png", "image/jpeg", "image/webp"];
@@ -17,14 +18,12 @@ function formatFileSize(bytes: number) {
 
 export function UploadForm() {
   const inputId = useId();
-  const noteId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const BackendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   function selectFile(nextFile: File | undefined) {
     setNotice(null);
@@ -62,14 +61,13 @@ export function UploadForm() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch(`${BackendURL}/studies`, {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.detail || "Upload failed. Please try again.");
-      }
+      const result = await requestJson<{ id: string; status: string }>(
+        "/studies",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
       setNotice(
         `Upload successful! Study ID: ${result.id}. Status: ${result.status}.`,
       );
@@ -117,8 +115,8 @@ export function UploadForm() {
             Upload a chest X-ray
           </p>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-            Drag an image here, or choose a file from your device. This is a
-            front-end demo — files never leave your browser.
+            Drag an image here, or choose a file from your device. The image
+            will be sent to the connected API and stored.
           </p>
 
           <input
@@ -174,28 +172,15 @@ export function UploadForm() {
         </div>
       )}
 
-      <div>
-        <label htmlFor={noteId} className="block text-xs font-medium text-ink">
-          Study note{" "}
-          <span className="font-normal text-muted-foreground">(optional)</span>
-        </label>
-        <textarea
-          id={noteId}
-          rows={3}
-          placeholder="Add fictional context for this demo study..."
-          maxLength={280}
-          className="mt-2 w-full resize-y rounded-lg border border-hairline bg-card px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-muted-foreground/80 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-        />
-      </div>
-
       <div className="flex items-start gap-2 rounded-lg border border-hairline bg-plate/55 px-3 py-2.5">
         <ShieldCheck
           className="mt-0.5 size-3.5 shrink-0 text-accent-ink"
           aria-hidden
         />
         <p className="text-[11px] leading-relaxed text-muted-foreground">
-          Do not use real patient images or identifiers. This prototype does not
-          upload, store, or analyze files, and does not produce diagnoses.
+          Do not use real patient images or identifiers. Uploaded files are
+          stored by the backend but are not analyzed and do not produce
+          diagnoses.
         </p>
       </div>
 

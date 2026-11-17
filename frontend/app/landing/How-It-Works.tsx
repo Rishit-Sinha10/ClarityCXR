@@ -2,18 +2,18 @@ import Reveal from "./reval";
 const steps = [
   {
     n: "01",
-    title: "Upload / Connect Data",
-    desc: "Bring together medical images, clinical documents, patient records, voice, and other healthcare data in one place.",
+    title: "Upload an image",
+    desc: "Add a chest X-ray in PNG, JPG, or WebP format. The connected API stores the file and returns its study record.",
   },
   {
     n: "02",
-    title: "AI Understands",
-    desc: "Our multimodal AI analyzes and connects information across different formats to build a complete clinical context.",
+    title: "Review the study",
+    desc: "Find the uploaded image by its filename, status, and upload time. Keep a text prompt with the selected study in your workspace.",
   },
   {
     n: "03",
-    title: "Clinical Insights",
-    desc: "Turn complex healthcare data into clear, source-linked findings for clinician review.",
+    title: "Send a request",
+    desc: "Submit the selected study to your configured prediction service. ClarityCXR shows the status and any output that service returns.",
   },
 ];
 export default function HowItWorks() {
@@ -28,9 +28,9 @@ export default function HowItWorks() {
         </Reveal>
         <Reveal delay={80}>
           <h2 className="mt-5 max-w-xl font-display text-4xl leading-[1.05] tracking-[-0.02em] text-ink sm:text-5xl">
-            Three steps.
+            From image
             <br />
-            Zero friction.
+            to analysis request.
           </h2>
         </Reveal>
         <div className="mt-16 grid gap-12 md:grid-cols-3 md:gap-8">

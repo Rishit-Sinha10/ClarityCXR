@@ -6,11 +6,11 @@ import {
   CalendarDays,
   FileText,
   HardDrive,
-  Info,
   ScanLine,
 } from "lucide-react";
 
 import { PageHeader } from "@/components/dashboard/page-header";
+import { PredictionWorkflow } from "@/components/dashboard/prediction-workflow";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import {
   getStudyById,
@@ -92,8 +92,8 @@ export default async function StudyDetailPage({ params }: StudyPageProps) {
             </div>
 
             <p className="mt-4 text-[10px] leading-relaxed text-muted-foreground">
-              This record confirms uploaded file metadata. Image preview and AI
-              analysis are not available through the current endpoint.
+              This record confirms uploaded file metadata. Image preview is not
+              shown here; AI model integration is pending.
             </p>
           </section>
 
@@ -148,9 +148,7 @@ export default async function StudyDetailPage({ params }: StudyPageProps) {
               </div>
 
               <StatusBadge
-                status={
-                  study.status as Parameters<typeof StatusBadge>[0]["status"]
-                }
+                status={study.status}
               />
             </div>
 
@@ -185,47 +183,7 @@ export default async function StudyDetailPage({ params }: StudyPageProps) {
             </dl>
           </section>
 
-          <section className="rounded-xl border border-hairline bg-card p-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] sm:p-5">
-            <h2 className="text-sm font-medium text-ink">Study timeline</h2>
-
-            <ol className="mt-4 space-y-3">
-              {[
-                ["Image added", "Demo workspace", "Complete"],
-                [
-                  "Analysis",
-                  study.status === "pending"
-                    ? "Waiting in demo queue"
-                    : study.status === "processing"
-                      ? "Illustrative processing state"
-                      : "Demo analysis complete",
-                  study.status === "pending"
-                    ? "Pending"
-                    : study.status === "processing"
-                      ? "In progress"
-                      : "Complete",
-                ],
-                ["Report", "Not available", "Waiting"],
-              ].map(([label, detail, state]) => (
-                <li key={label} className="flex items-start gap-3">
-                  <span
-                    className="mt-1 size-1.5 shrink-0 rounded-full bg-accent"
-                    aria-hidden
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-xs font-medium text-ink">{label}</p>
-                      <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
-                        {state}
-                      </span>
-                    </div>
-                    <p className="mt-0.5 text-[10px] text-muted-foreground">
-                      {detail}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
+          <PredictionWorkflow studyId={study.id} />
         </div>
       </div>
     </div>

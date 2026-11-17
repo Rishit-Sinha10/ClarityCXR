@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s — ClarityCXR",
   },
   description:
-    "ClarityCXR chest X-ray analysis workspace. Demonstration interface with fictional data.",
+    "ClarityCXR workspace for uploaded study metadata. Diagnostic output is not available.",
   robots: {
     index: false,
     follow: false,

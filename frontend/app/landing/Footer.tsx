@@ -32,8 +32,8 @@ export default function Footer() {
           <div>
             <Brand dark />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">
-              Fusing imaging, reports, and clinical notes into one source-linked
-              read.
+              Chest X-ray uploads, study tracking, and connected prediction
+              requests in one workspace.
             </p>
           </div>
 
@@ -75,9 +75,8 @@ export default function Footer() {
             </div>
           </div>
           <p className="mt-4 max-w-2xl text-xs leading-relaxed text-paper/50">
-            ClarityCXR is decision-support software. Outputs are not a diagnosis
-            and require review by a qualified radiologist. Do not submit patient
-            information through this site.
+            The current app does not independently interpret images or generate
+            diagnoses. Do not submit patient information through this site.
           </p>
         </div>
       </div>

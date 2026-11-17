@@ -11,8 +11,8 @@ export default function StudyNotFound() {
         Study not found
       </h1>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-        This demo study does not exist. Return to Study History to browse the
-        fictional records.
+        This study could not be found or is no longer available. Return to
+        Study History to choose another study.
       </p>
       <Link
         href="/dashboard/history"
