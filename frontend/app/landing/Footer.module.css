@@ -1,0 +1,65 @@
+.signature {
+  margin-top: 3.5rem;
+  border-top: 1px solid rgb(10 10 10 / 10%);
+  padding: 1.75rem 0 0.5rem;
+}
+
+.wordmark {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 14vw, 10rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+}
+
+.letter {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(10 10 10 / 26%);
+  transition:
+    -webkit-text-stroke-color 180ms ease,
+    transform 180ms ease;
+}
+
+.letter::after {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(15 211 184 / 72%) 0 1px,
+    transparent 1px 7px
+  );
+  background-clip: text;
+  color: transparent;
+  content: attr(data-letter);
+  opacity: 0;
+  pointer-events: none;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 0;
+  transition:
+    opacity 180ms ease,
+    background-position 180ms ease;
+}
+
+.letter:hover {
+  transform: translateY(-0.035em);
+  -webkit-text-stroke-color: var(--accent);
+}
+
+.letter:hover::after {
+  background-position: 7px 0;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter,
+  .letter::after {
+    transition: none;
+  }
+}

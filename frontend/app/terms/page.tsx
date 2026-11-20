@@ -20,10 +20,6 @@ export default function TermsPage() {
         className="bg-background focus:outline-none"
       >
         <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 lg:py-24">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
-            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" />
-            Legal
-          </p>
           <h1 className="mt-5 font-display text-4xl leading-[1.05] tracking-[-0.02em] text-ink sm:text-5xl">
             Terms of use
           </h1>
@@ -131,8 +127,8 @@ export default function TermsPage() {
               <p className="mt-2">
                 These terms are governed by the laws applicable to the operator
                 of this site, without regard to conflict-of-laws rules. Any
-                dispute will be handled by the courts with jurisdiction over
-                the operator.
+                dispute will be handled by the courts with jurisdiction over the
+                operator.
               </p>
             </section>
 

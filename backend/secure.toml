@@ -1,0 +1,6 @@
+title = "My App"
+
+[database]
+host = "localhost"
+port = 5432
+enabled = true

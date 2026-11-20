@@ -20,10 +20,6 @@ export default function PrivacyPage() {
         className="bg-background focus:outline-none"
       >
         <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 lg:py-24">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
-            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" />
-            Legal
-          </p>
           <h1 className="mt-5 font-display text-4xl leading-[1.05] tracking-[-0.02em] text-ink sm:text-5xl">
             Privacy policy
           </h1>
@@ -64,12 +60,10 @@ export default function PrivacyPage() {
                   institution, role, chest volume, and any message you add.
                 </li>
                 <li>
-                  Technical data needed to serve and secure the site, such as
-                  IP address, browser type, and requested pages in server logs.
+                  Technical data needed to serve and secure the site, such as IP
+                  address, browser type, and requested pages in server logs.
                 </li>
-                <li>
-                  Authentication cookies if you sign in to the product.
-                </li>
+                <li>Authentication cookies if you sign in to the product.</li>
               </ul>
               <p className="mt-3">
                 We do not ask for patient information on this site. Please do

@@ -1,4 +1,5 @@
 import Brand from "./brand";
+import styles from "./Footer.module.css";
 
 const columns: { title: string; links: [string, string][] }[] = [
   {
@@ -26,12 +27,12 @@ const columns: { title: string; links: [string, string][] }[] = [
 
 export default function Footer() {
   return (
-    <footer className="bg-ink text-paper">
+    <footer className="bg-paper/70 text-ink">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="grid gap-10 py-14 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-8">
           <div>
-            <Brand dark />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">
+            <Brand />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink/60">
               Chest X-ray uploads, study tracking, and connected prediction
               requests in one workspace.
             </p>
@@ -39,7 +40,7 @@ export default function Footer() {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper/60">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/60">
                 {col.title}
               </p>
               <ul className="mt-4 space-y-2.5">
@@ -47,7 +48,7 @@ export default function Footer() {
                   <li key={label}>
                     <a
                       href={href}
-                      className="text-sm text-paper/70 transition-colors hover:text-accent"
+                      className="text-sm text-ink/70 transition-colors hover:text-accent"
                     >
                       {label}
                     </a>
@@ -57,27 +58,18 @@ export default function Footer() {
             </div>
           ))}
         </div>
-        <div className="border-t border-paper/10 py-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-paper/50">
-              © {new Date().getFullYear()} ClarityCXR. All rights reserved.
-            </p>
-            <div className="flex gap-4 text-xs text-paper/50">
-              <a
-                href="/privacy"
-                className="transition-colors hover:text-accent"
+        <div className={styles.signature}>
+          <div className={styles.wordmark} aria-hidden="true">
+            {Array.from("CLARITYCXR").map((letter, index) => (
+              <span
+                key={`${letter}-${index}`}
+                className={styles.letter}
+                data-letter={letter}
               >
-                Privacy
-              </a>
-              <a href="/terms" className="transition-colors hover:text-accent">
-                Terms
-              </a>
-            </div>
+                {letter}
+              </span>
+            ))}
           </div>
-          <p className="mt-4 max-w-2xl text-xs leading-relaxed text-paper/50">
-            The current app does not independently interpret images or generate
-            diagnoses. Do not submit patient information through this site.
-          </p>
         </div>
       </div>
     </footer>

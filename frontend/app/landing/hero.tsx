@@ -3,7 +3,8 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Dashboard from "@/public/background.png";
+import Background from "@/public/background.png";
+import Dashboard from "@/public/image.png";
 import Link from "next/link";
 /**
  * One orchestrated moment: the headline resolves word by word,
@@ -66,7 +67,7 @@ export default function Hero({
       {/* Background: optimised image + gradient so text always stays legible */}
       <div aria-hidden="true" className="absolute inset-0 z-0">
         <Image
-          src={Dashboard}
+          src={Background}
           alt=""
           fill
           priority
@@ -80,7 +81,7 @@ export default function Hero({
       <div className="relative z-10 mx-auto max-w-5xl px-6 pb-14 pt-24 text-center sm:pb-20 sm:pt-32">
         <h1
           id="hero-heading"
-          className="mb-6 text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl md:text-6xl"
+          className="mb-6 text-3xl font-bold leading-snug tracking-tighter sm:text-4xl md:text-5xl"
         >
           <Word delay={0}>Healthcare</Word>
           <br />
@@ -88,7 +89,7 @@ export default function Hero({
             delay={140}
             className={cn(
               heroClassName,
-              "text-5xl font-normal sm:text-6xl md:text-7xl",
+              "text-3xl font-normal sm:text-4xl md:text-5xl",
             )}
           >
             Intelligence
@@ -97,12 +98,11 @@ export default function Hero({
         </h1>
 
         <p
-          className="hero-fade mx-auto mb-9 max-w-2xl text-base leading-snug text-muted-foreground sm:text-lg"
+          className="hero-fade mx-auto mb-9 max-w-xl text-xs leading-snug text-muted-foreground sm:text-xs text-balance"
           style={{ animationDelay: "520ms" }}
         >
-          One workspace for medical images, reports, and health data. ClarityCXR
-          uses multimodal AI to read them together, so you see the full picture
-          faster.
+          Upload chest X-rays, review study details, and submit requests to your
+          configured prediction service—all in one workspace.
         </p>
 
         <div
@@ -110,8 +110,9 @@ export default function Hero({
           style={{ animationDelay: "680ms" }}
         >
           <Button
-            size="lg"
-            className="focus-outline rounded-lg px-8 py-6 text-base"
+            asChild
+            size="default"
+            className="focus-outline rounded-md px-6 py-4 text-sm leading-snug"
           >
             <Link href="/login" onClick={onTryForFree}>
               Try for free
@@ -119,30 +120,22 @@ export default function Hero({
           </Button>
           <Button
             asChild
-            size="lg"
+            size="default"
             variant="outline"
-            className="focus-outline rounded-lg px-8 py-6 text-base"
+            className="focus-outline rounded-md px-6 py-4 text-sm leading-snug"
           >
-            <Link href="#intended-use">See how it works</Link>
+            <Link href="#how">See how it works</Link>
           </Button>
         </div>
-
-        <p
-          className="hero-fade mt-5 text-sm text-muted-foreground"
-          style={{ animationDelay: "800ms" }}
-        >
-          No credit card needed. Upload a chest X-ray and get a draft read in
-          minutes.
-        </p>
       </div>
 
       {/* Product preview */}
       <div
         role="img"
         aria-label="Illustrative preview of the ClarityCXR workspace"
-        className="relative z-10 px-4 pb-16 sm:px-10 sm:pb-24"
+        className="relative z-10 px-4 pb-8 sm:px-8 sm:pb-16"
       >
-        <div className="hero-preview relative mx-auto max-w-5xl">
+        <div className="hero-preview relative mx-auto max-w-4xl">
           {/* soft glow behind the frame */}
           <div
             aria-hidden="true"

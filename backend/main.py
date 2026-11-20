@@ -1,12 +1,18 @@
+import logging
 from pathlib import Path
+from datetime import datetime
+from typing import Any, List, Optional
 from uuid import UUID, uuid4
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 from sqlalchemy import text
 from config.database import engine
+
 app = FastAPI(title="ClarityCXR API", version="0.2.0")
+logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -21,6 +27,22 @@ EXTENSIONS = {
 }
 ALLOWED_TYPES = set(EXTENSIONS)
 
+
+class PredictionCreatedResponse(BaseModel):
+    id: UUID
+    status: str
+
+
+class PredictionResponse(BaseModel):
+    id: UUID
+    study_id: UUID
+    model_name: Optional[str] = None
+    model_version: Optional[str] = None
+    task_type: Optional[str] = None
+    results_json: Optional[Any] = None
+    status: str
+    created_at: datetime
+    completed_at: Optional[datetime] = None
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -36,8 +58,6 @@ app.add_middleware(
     ],
     allow_headers=["*"],
 )
-
-
 def format_study(row):
     return {
         "id": str(row["id"]),
@@ -46,8 +66,6 @@ def format_study(row):
         "status": row["status"],
         "created_at": row["created_at"],
     }
-
-
 def detect_image_type(header: bytes) -> str | None:
     """Identify the real image type from its magic bytes."""
     if header.startswith(b"\xff\xd8\xff"):
@@ -86,6 +104,101 @@ def insert_study(params: dict):
         return connection.execute(INSERT_STUDY_SQL, params).mappings().one()
 
 
+PREDICTION_COLUMNS = """
+    id, study_id, model_name, model_version, task_type,
+    results_json, status, created_at, completed_at
+"""
+
+
+@app.post(
+    "/studies/{study_id}/predict",
+    status_code=201,
+    response_model=PredictionCreatedResponse,
+)
+def create_prediction(study_id: UUID):
+    prediction_id = uuid4()
+    try:
+        with engine.begin() as connection:
+            study_exists = connection.execute(
+                text("SELECT 1 FROM public.images WHERE id = :study_id"),
+                {"study_id": study_id},
+            ).first()
+            if study_exists is None:
+                raise HTTPException(status_code=404, detail="Study not found.")
+            row = connection.execute(
+                text("""
+                    INSERT INTO public.predictions (id, study_id, status)
+                    VALUES (:id, :study_id, 'pending')
+                    RETURNING id, status
+                """),
+                {"id": prediction_id, "study_id": study_id},
+            ).mappings().one()
+        return PredictionCreatedResponse(**row)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Could not create prediction for study %s.", study_id)
+        raise HTTPException(
+            status_code=500,
+            detail="Could not create the prediction.",
+        )
+@app.get(
+    "/studies/{study_id}/predictions",
+    response_model=List[PredictionResponse],
+)
+def list_study_predictions(study_id: UUID):
+    try:
+        with engine.connect() as connection:
+            study_exists = connection.execute(
+                text("SELECT 1 FROM public.images WHERE id = :study_id"),
+                {"study_id": study_id},
+            ).first()
+            if study_exists is None:
+                raise HTTPException(status_code=404, detail="Study not found.")
+
+            rows = connection.execute(
+                text(f"""
+                    SELECT {PREDICTION_COLUMNS}
+                    FROM public.predictions
+                    WHERE study_id = :study_id
+                    ORDER BY created_at DESC
+                """),
+                {"study_id": study_id},
+            ).mappings().all()
+        return rows
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Could not retrieve predictions for study %s.", study_id)
+        raise HTTPException(
+            status_code=500,
+            detail="Could not retrieve predictions.",
+        )
+
+@app.get("/predictions/{prediction_id}", response_model=PredictionResponse)
+def get_prediction(prediction_id: UUID):
+    try:
+        with engine.connect() as connection:
+            row = connection.execute(
+                text(f"""
+                    SELECT {PREDICTION_COLUMNS}
+                    FROM public.predictions
+                    WHERE id = :prediction_id
+                """),
+                {"prediction_id": prediction_id},
+            ).mappings().first()
+
+        if row is None:
+            raise HTTPException(status_code=404, detail="Prediction not found.")
+        return row
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Could not retrieve prediction %s.", prediction_id)
+        raise HTTPException(
+            status_code=500,
+            detail="Could not retrieve the prediction.",
+        )
 @app.get("/health")
 def health():
     try:
@@ -101,8 +214,6 @@ def health():
             status_code=503,
             detail="Database connection failed.",
         )
-
-
 @app.post("/studies", status_code=201)
 async def create_study(file: UploadFile = File(...)):
     if file.content_type not in ALLOWED_TYPES:
@@ -292,7 +403,6 @@ def delete_study(study_id: UUID):
             )
 
         image_path.unlink(missing_ok=True)
-
     except HTTPException:
         raise
     except Exception:

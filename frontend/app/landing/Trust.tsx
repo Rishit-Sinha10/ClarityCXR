@@ -59,7 +59,10 @@ const faqJsonLd = {
 
 export default function Trust() {
   return (
-    <section id="trust" className="border-t border-hairline bg-background">
+    <section
+      id="trust"
+      className="border-t border-hairline bg-background border-none"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -67,12 +70,6 @@ export default function Trust() {
         }}
       />
       <div className="mx-auto max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
-        <Reveal>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
-            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" />
-            Trust &amp; evaluation
-          </p>
-        </Reveal>
         <Reveal delay={80}>
           <h2 className="mt-5 max-w-2xl font-display text-4xl leading-[1.05] tracking-[-0.02em] text-ink sm:text-5xl">
             Proof, without
@@ -104,7 +101,7 @@ export default function Trust() {
                       <p className="text-sm font-medium text-ink">
                         {item.title}
                       </p>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground text-pretty">
                         {item.body}
                       </p>
                     </div>
